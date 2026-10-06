@@ -195,12 +195,12 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,macos
 
-# Playwright
-test-results/
-playwright-report/
-blob-report/
-playwright/.cache/
-playwright/.auth/
-
 # Environment variables
 .env
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/test-results/
