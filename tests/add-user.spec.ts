@@ -1,62 +1,64 @@
 import { test, expect } from "@playwright/test";
+import { LoginPage } from "../pages/login.page";
+import { AddUserPage } from "../pages/add-user.page";
+import { HomePage } from "../pages/home.page";
 
-const BASE_URL = "https://traineeautomation.azurewebsites.net";
-const ADD_USER_URL = `${BASE_URL}/Forms/User/AddUser`;
+let addUserPage: AddUserPage;
+let homePage: HomePage;
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(ADD_USER_URL);
-  await page.getByTestId("username-field").getByTestId("input").fill("user");
-  await page.getByTestId("password-field").getByTestId("input").fill("123");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page.getByRole("heading", { name: "Add User" })).toBeVisible();
+  addUserPage = new AddUserPage(page);
+  homePage = new HomePage(page);
+
+  await addUserPage.goto();
+  await new LoginPage(page).login("user", "123");
+
+  await expect(addUserPage.heading).toBeVisible();
 });
 
 test("Add User form is displayed with all fields", async ({ page }) => {
-  await expect(page).toHaveURL(ADD_USER_URL);
-  await expect(page.getByTestId("select-Gender")).toBeVisible();
-  await expect(page.getByTestId("input-UserName")).toBeVisible();
-  await expect(page.getByTestId("input-YearOfBirth")).toBeVisible();
-  await expect(page.getByTestId("button-Create")).toBeVisible();
-  await expect(page.getByTestId("button-Cancel")).toBeVisible();
+  await expect(page).toHaveURL(AddUserPage.url);
+  await expect(addUserPage.genderSelect).toBeVisible();
+  await expect(addUserPage.userNameInput).toBeVisible();
+  await expect(addUserPage.yearOfBirthInput).toBeVisible();
+  await expect(addUserPage.createButton).toBeVisible();
+  await expect(addUserPage.cancelButton).toBeVisible();
 });
 
-test("Input fields accept entered values", async ({ page }) => {
-  await page.getByTestId("select-Gender").selectOption("2");
-  await page.getByTestId("input-UserName").fill("Test User");
-  await page.getByTestId("input-YearOfBirth").fill("1990");
+test("Input fields accept entered values", async () => {
+  await addUserPage.fillForm({ gender: "2", userName: "Test User", yearOfBirth: "1990" });
 
-  await expect(page.getByTestId("select-Gender")).toHaveValue("2");
-  await expect(page.getByTestId("input-UserName")).toHaveValue("Test User");
-  await expect(page.getByTestId("input-YearOfBirth")).toHaveValue("1990");
+  await expect(addUserPage.genderSelect).toHaveValue("2");
+  await expect(addUserPage.userNameInput).toHaveValue("Test User");
+  await expect(addUserPage.yearOfBirthInput).toHaveValue("1990");
 });
 
-test("User is created with valid data", async ({ page }) => {
+test("User is created with valid data", async () => {
   const userName = `User${Date.now().toString().slice(-6)}`;
 
-  await page.getByTestId("select-Gender").selectOption("2");
-  await page.getByTestId("input-UserName").fill(userName);
-  await page.getByTestId("input-YearOfBirth").fill("1990");
-  await page.getByTestId("button-Create").click();
+  await addUserPage.fillForm({ gender: "2", userName, yearOfBirth: "1990" });
+  await addUserPage.submit();
 
-  await expect(page.getByRole("heading", { name: "Users and Addresses" })).toBeVisible();
-  await expect(page.getByRole("cell", { name: userName })).toBeVisible();
+  await expect(homePage.heading).toBeVisible();
+  await expect(homePage.userNameCell(userName)).toBeVisible();
 });
 
 test("User is not created without a name", async ({ page }) => {
-  await page.getByTestId("select-Gender").selectOption("2");
-  await page.getByTestId("input-YearOfBirth").fill("1990");
-  await page.getByTestId("button-Create").click();
+  await addUserPage.fillForm({ gender: "2", yearOfBirth: "1990" });
+  await addUserPage.submit();
 
-  await expect(page.getByText("Name is requried")).toBeVisible();
-  await expect(page).toHaveURL(ADD_USER_URL);
+  await expect(addUserPage.userNameError).toBeVisible();
+  await expect(page).toHaveURL(AddUserPage.url);
 });
 
 test("User under 18 is not created", async ({ page }) => {
-  await page.getByTestId("select-Gender").selectOption("2");
-  await page.getByTestId("input-UserName").fill(`User${Date.now().toString().slice(-6)}`);
-  await page.getByTestId("input-YearOfBirth").fill("2009");
-  await page.getByTestId("button-Create").click();
+  await addUserPage.fillForm({
+    gender: "2",
+    userName: `User${Date.now().toString().slice(-6)}`,
+    yearOfBirth: "2009",
+  });
+  await addUserPage.submit();
 
-  await expect(page.getByText("Not valid Year of Birth is set")).toBeVisible();
-  await expect(page).toHaveURL(ADD_USER_URL);
+  await expect(addUserPage.yearOfBirthError).toBeVisible();
+  await expect(page).toHaveURL(AddUserPage.url);
 });
