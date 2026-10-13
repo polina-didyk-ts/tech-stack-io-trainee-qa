@@ -1,5 +1,11 @@
 import { type Page, type Locator } from "@playwright/test";
 
+export type UserFormData = {
+  gender?: string;
+  userName?: string;
+  yearOfBirth?: string;
+};
+
 export class AddUserPage {
   static readonly url = "https://traineeautomation.azurewebsites.net/Forms/User/AddUser";
 
@@ -29,15 +35,7 @@ export class AddUserPage {
     await this.page.goto(AddUserPage.url);
   }
 
-  async fillForm({
-    gender,
-    userName,
-    yearOfBirth,
-  }: {
-    gender?: string;
-    userName?: string;
-    yearOfBirth?: string;
-  }) {
+  async fillForm({ gender, userName, yearOfBirth }: UserFormData) {
     if (gender !== undefined) await this.genderSelect.selectOption(gender);
     if (userName !== undefined) await this.userNameInput.fill(userName);
     if (yearOfBirth !== undefined) await this.yearOfBirthInput.fill(yearOfBirth);
