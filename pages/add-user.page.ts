@@ -1,9 +1,9 @@
 import { type Page, type Locator } from "@playwright/test";
 
 export type UserFormData = {
-  gender?: string;
-  userName?: string;
-  yearOfBirth?: string;
+  gender: string;
+  userName: string;
+  yearOfBirth: string;
 };
 
 export class AddUserPage {
@@ -36,9 +36,9 @@ export class AddUserPage {
   }
 
   async fillForm({ gender, userName, yearOfBirth }: UserFormData) {
-    if (gender !== undefined) await this.genderSelect.selectOption(gender);
-    if (userName !== undefined) await this.userNameInput.fill(userName);
-    if (yearOfBirth !== undefined) await this.yearOfBirthInput.fill(yearOfBirth);
+    await this.genderSelect.selectOption(gender);
+    await this.userNameInput.fill(userName);
+    await this.yearOfBirthInput.fill(yearOfBirth);
   }
 
   async submit() {

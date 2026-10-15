@@ -13,6 +13,7 @@ test.beforeEach(async ({ page }) => {
   homePage = new HomePage(page);
 
   await addUserSteps.openAddUserForm();
+  await addUserSteps.loginAsUser();
 
   await expect(addUserPage.heading).toBeVisible();
 });
@@ -27,7 +28,7 @@ test("Add User form is displayed with all fields", async ({ page }) => {
 });
 
 test("Input fields accept entered values", async () => {
-  await addUserSteps.fillForm({ gender: "2", userName: "Test User", yearOfBirth: "1990" });
+  await addUserSteps.fillUserForm({ gender: "2", userName: "Test User", yearOfBirth: "1990" });
 
   await expect(addUserPage.genderSelect).toHaveValue("2");
   await expect(addUserPage.userNameInput).toHaveValue("Test User");
@@ -37,21 +38,21 @@ test("Input fields accept entered values", async () => {
 test("User is created with valid data", async () => {
   const userName = `User${Date.now().toString().slice(-6)}`;
 
-  await addUserSteps.submitForm({ gender: "2", userName, yearOfBirth: "1990" });
+  await addUserSteps.createUser({ gender: "2", userName, yearOfBirth: "1990" });
 
   await expect(homePage.heading).toBeVisible();
   await expect(homePage.userNameCell(userName)).toBeVisible();
 });
 
 test("User is not created without a name", async ({ page }) => {
-  await addUserSteps.submitForm({ gender: "2", yearOfBirth: "1990" });
+  await addUserSteps.createUser({ gender: "2", userName: "", yearOfBirth: "1990" });
 
   await expect(addUserPage.userNameError).toBeVisible();
   await expect(page).toHaveURL(AddUserPage.url);
 });
 
 test("User under 18 is not created", async ({ page }) => {
-  await addUserSteps.submitForm({
+  await addUserSteps.createUser({
     gender: "2",
     userName: `User${Date.now().toString().slice(-6)}`,
     yearOfBirth: "2009",
