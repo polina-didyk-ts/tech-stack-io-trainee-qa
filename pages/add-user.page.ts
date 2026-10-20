@@ -1,5 +1,5 @@
 import { type Page, type Locator } from "@playwright/test";
-import { UserDTO } from "../dto/user.dto";
+import { type UserDTO } from "../dto/user.dto";
 
 export class AddUserPage {
   static readonly url = "https://traineeautomation.azurewebsites.net/Forms/User/AddUser";

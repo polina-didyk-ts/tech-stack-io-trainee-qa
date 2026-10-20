@@ -1,7 +1,7 @@
 import { type Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { AddUserPage } from "../pages/add-user.page";
-import { UserDTO } from "../dto/user.dto";
+import { type UserDTO } from "../dto/user.dto";
 
 export class AddUserSteps {
   private readonly loginPage: LoginPage;

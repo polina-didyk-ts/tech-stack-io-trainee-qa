@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { AddUserPage } from "../pages/add-user.page";
 import { HomePage } from "../pages/home.page";
 import { AddUserSteps } from "../steps/add-user.steps";
-import { UserDTO } from "../dto/user.dto";
+import { type UserDTO } from "../dto/user.dto";
 
 let addUserSteps: AddUserSteps;
 let addUserPage: AddUserPage;
@@ -29,7 +29,7 @@ test("Add User form is displayed with all fields", async ({ page }) => {
 });
 
 test("Input fields accept entered values", async () => {
-  const user = new UserDTO("2", "Test User", "1990");
+  const user: UserDTO = { gender: "2", userName: "Test User", yearOfBirth: "1990" };
 
   await addUserSteps.fillUserForm(user);
 
@@ -39,7 +39,11 @@ test("Input fields accept entered values", async () => {
 });
 
 test("User is created with valid data", async () => {
-  const user = new UserDTO("2", `User${Date.now().toString().slice(-6)}`, "1990");
+  const user: UserDTO = {
+    gender: "2",
+    userName: `User${Date.now().toString().slice(-6)}`,
+    yearOfBirth: "1990",
+  };
 
   await addUserSteps.createUser(user);
 
@@ -48,7 +52,7 @@ test("User is created with valid data", async () => {
 });
 
 test("User is not created without a name", async ({ page }) => {
-  const user = new UserDTO("2", "", "1990");
+  const user: UserDTO = { gender: "2", userName: "", yearOfBirth: "1990" };
 
   await addUserSteps.createUser(user);
 
@@ -57,7 +61,11 @@ test("User is not created without a name", async ({ page }) => {
 });
 
 test("User under 18 is not created", async ({ page }) => {
-  const user = new UserDTO("2", `User${Date.now().toString().slice(-6)}`, "2009");
+  const user: UserDTO = {
+    gender: "2",
+    userName: `User${Date.now().toString().slice(-6)}`,
+    yearOfBirth: "2009",
+  };
 
   await addUserSteps.createUser(user);
 
