@@ -1,10 +1,5 @@
 import { type Page, type Locator } from "@playwright/test";
-
-export type UserFormData = {
-  gender: string;
-  userName: string;
-  yearOfBirth: string;
-};
+import { type UserDTO } from "../dto/user.dto";
 
 export class AddUserPage {
   static readonly url = "https://traineeautomation.azurewebsites.net/Forms/User/AddUser";
@@ -35,10 +30,10 @@ export class AddUserPage {
     await this.page.goto(AddUserPage.url);
   }
 
-  async fillForm({ gender, userName, yearOfBirth }: UserFormData) {
-    await this.genderSelect.selectOption(gender);
-    await this.userNameInput.fill(userName);
-    await this.yearOfBirthInput.fill(yearOfBirth);
+  async fillForm(user: UserDTO) {
+    await this.genderSelect.selectOption(user.gender);
+    await this.userNameInput.fill(user.userName);
+    await this.yearOfBirthInput.fill(user.yearOfBirth);
   }
 
   async submit() {

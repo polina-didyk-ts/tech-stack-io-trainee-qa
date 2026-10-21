@@ -1,7 +1,7 @@
-
 import { type Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
-import { AddUserPage, type UserFormData } from "../pages/add-user.page";
+import { AddUserPage } from "../pages/add-user.page";
+import { type UserDTO } from "../dto/user.dto";
 
 export class AddUserSteps {
   private readonly loginPage: LoginPage;
@@ -20,11 +20,11 @@ export class AddUserSteps {
     await this.loginPage.login("user", "123");
   }
 
-  async fillUserForm(user: UserFormData) {
+  async fillUserForm(user: UserDTO) {
     await this.addUserPage.fillForm(user);
   }
 
-  async createUser(user: UserFormData) {
+  async createUser(user: UserDTO) {
     await this.fillUserForm(user);
     await this.addUserPage.submit();
   }

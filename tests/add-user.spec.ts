@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { AddUserPage } from "../pages/add-user.page";
 import { HomePage } from "../pages/home.page";
 import { AddUserSteps } from "../steps/add-user.steps";
+import { type UserDTO } from "../dto/user.dto";
 
 let addUserSteps: AddUserSteps;
 let addUserPage: AddUserPage;
@@ -28,35 +29,45 @@ test("Add User form is displayed with all fields", async ({ page }) => {
 });
 
 test("Input fields accept entered values", async () => {
-  await addUserSteps.fillUserForm({ gender: "2", userName: "Test User", yearOfBirth: "1990" });
+  const user: UserDTO = { gender: "2", userName: "Test User", yearOfBirth: "1990" };
 
-  await expect(addUserPage.genderSelect).toHaveValue("2");
-  await expect(addUserPage.userNameInput).toHaveValue("Test User");
-  await expect(addUserPage.yearOfBirthInput).toHaveValue("1990");
+  await addUserSteps.fillUserForm(user);
+
+  await expect(addUserPage.genderSelect).toHaveValue(user.gender);
+  await expect(addUserPage.userNameInput).toHaveValue(user.userName);
+  await expect(addUserPage.yearOfBirthInput).toHaveValue(user.yearOfBirth);
 });
 
 test("User is created with valid data", async () => {
-  const userName = `User${Date.now().toString().slice(-6)}`;
+  const user: UserDTO = {
+    gender: "2",
+    userName: `User${Date.now().toString().slice(-6)}`,
+    yearOfBirth: "1990",
+  };
 
-  await addUserSteps.createUser({ gender: "2", userName, yearOfBirth: "1990" });
+  await addUserSteps.createUser(user);
 
   await expect(homePage.heading).toBeVisible();
-  await expect(homePage.userNameCell(userName)).toBeVisible();
+  await expect(homePage.userNameCell(user.userName)).toBeVisible();
 });
 
 test("User is not created without a name", async ({ page }) => {
-  await addUserSteps.createUser({ gender: "2", userName: "", yearOfBirth: "1990" });
+  const user: UserDTO = { gender: "2", userName: "", yearOfBirth: "1990" };
+
+  await addUserSteps.createUser(user);
 
   await expect(addUserPage.userNameError).toBeVisible();
   await expect(page).toHaveURL(AddUserPage.url);
 });
 
 test("User under 18 is not created", async ({ page }) => {
-  await addUserSteps.createUser({
+  const user: UserDTO = {
     gender: "2",
     userName: `User${Date.now().toString().slice(-6)}`,
     yearOfBirth: "2009",
-  });
+  };
+
+  await addUserSteps.createUser(user);
 
   await expect(addUserPage.yearOfBirthError).toBeVisible();
   await expect(page).toHaveURL(AddUserPage.url);
