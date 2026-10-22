@@ -34,11 +34,10 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
 
-  /* UI tests run in major browsers; API tests don't need a browser, so they run once. */
+  /* Configure projects for major browsers */
   projects: [
-    { name: "chromium", testIgnore: "api/**", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", testIgnore: "api/**", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", testIgnore: "api/**", use: { ...devices["Desktop Safari"] } },
-    { name: "api", testMatch: "api/**/*.spec.ts" },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
 });
