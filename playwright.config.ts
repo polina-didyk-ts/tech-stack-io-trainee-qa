@@ -22,6 +22,8 @@ export default defineConfig({
   /* Console output + HTML report (open manually: npx playwright show-report). */
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
+    /* Base URL for page.goto(), expect(page).toHaveURL() and API requests. */
+    baseURL: "https://traineeautomation.azurewebsites.net",
     /* Max time for a single action like click/fill (default: no limit, bounded only by test timeout). */
     actionTimeout: 10_000,
     /* Max time for page.goto and other navigations. */
