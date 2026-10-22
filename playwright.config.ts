@@ -22,6 +22,8 @@ export default defineConfig({
   /* Console output + HTML report (open manually: npx playwright show-report). */
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
+    /* Base URL for page.goto(), expect(page).toHaveURL() and API requests. */
+    baseURL: "https://traineeautomation.azurewebsites.net",
     /* Max time for a single action like click/fill (default: no limit, bounded only by test timeout). */
     actionTimeout: 10_000,
     /* Max time for page.goto and other navigations. */
@@ -32,10 +34,11 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
 
-  /* Configure projects for major browsers */
+  /* UI tests run in major browsers; API tests don't need a browser, so they run once. */
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    { name: "chromium", testIgnore: "api/**", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", testIgnore: "api/**", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", testIgnore: "api/**", use: { ...devices["Desktop Safari"] } },
+    { name: "api", testMatch: "api/**/*.spec.ts" },
   ],
 });

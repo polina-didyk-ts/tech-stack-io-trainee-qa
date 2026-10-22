@@ -2,7 +2,7 @@ import { type Page, type Locator } from "@playwright/test";
 import { type UserDTO } from "../dto/user.dto";
 
 export class AddUserPage {
-  static readonly url = "https://traineeautomation.azurewebsites.net/Forms/User/AddUser";
+  static readonly url = "/Forms/User/AddUser";
 
   readonly page: Page;
   readonly heading: Locator;

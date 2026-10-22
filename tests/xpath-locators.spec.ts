@@ -1,8 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const BASE_URL = "https://traineeautomation.azurewebsites.net";
-const ADD_USER_URL = `${BASE_URL}/Forms/User/AddUser`;
-const ADD_ADDRESS_URL = `${BASE_URL}/Forms/Address/AddAddress`;
+const ADD_USER_URL = "/Forms/User/AddUser";
+const ADD_ADDRESS_URL = "/Forms/Address/AddAddress";
 
 async function login(page: Page) {
   await page.getByTestId("username-field").getByTestId("input").fill("user");
