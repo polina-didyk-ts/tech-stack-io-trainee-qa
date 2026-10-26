@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
+import { createUser, deleteUser, getAuthHeaders, type AuthHeaders } from "../api/user.api";
 
-const ADD_USER_URL = "/Forms/User/AddUser";
+const HOME_URL = "/";
 const ADD_ADDRESS_URL = "/Forms/Address/AddAddress";
 
 async function login(page: Page) {
@@ -10,19 +11,23 @@ async function login(page: Page) {
 }
 
 test.describe("User table — XPath axes", () => {
+  let headers: AuthHeaders;
   let userName: string;
+  let userId: string;
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto(ADD_USER_URL);
+  test.beforeEach(async ({ page, request }) => {
+    headers = await getAuthHeaders(request);
+    userName = `U${Date.now().toString().slice(-5)}${Math.floor(Math.random() * 100)}`;
+    userId = await createUser(request, headers, { name: userName, yearOfBirth: 1990, gender: 2 });
+
+    await page.goto(HOME_URL);
     await login(page);
 
-    userName = `U${Date.now().toString().slice(-5)}${Math.floor(Math.random() * 100)}`;
-    await page.getByTestId("select-Gender").selectOption("2");
-    await page.getByTestId("input-UserName").fill(userName);
-    await page.getByTestId("input-YearOfBirth").fill("1990");
-    await page.getByTestId("button-Create").click();
-
     await expect(page.getByRole("heading", { name: "Users and Addresses" })).toBeVisible();
+  });
+
+  test.afterEach(async ({ request }) => {
+    await deleteUser(request, headers, userId);
   });
 
   test("Year of birth is shown in the row of the created user", async ({ page }) => {
