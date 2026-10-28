@@ -3,20 +3,30 @@ import { AddUserPage } from "../pages/add-user.page";
 import { HomePage } from "../pages/home.page";
 import { AddUserSteps } from "../steps/add-user.steps";
 import { type UserDTO } from "../dto/user.dto";
+import { deleteUsersByName, getAuthHeaders } from "../api/user.api";
 
 let addUserSteps: AddUserSteps;
 let addUserPage: AddUserPage;
 let homePage: HomePage;
+let createdUserNames: string[];
 
 test.beforeEach(async ({ page }) => {
   addUserSteps = new AddUserSteps(page);
   addUserPage = new AddUserPage(page);
   homePage = new HomePage(page);
+  createdUserNames = [];
 
   await addUserSteps.openAddUserForm();
   await addUserSteps.loginAsUser();
 
   await expect(addUserPage.heading).toBeVisible();
+});
+
+test.afterEach(async ({ request }) => {
+  for (const name of createdUserNames) {
+    const headers = await getAuthHeaders(request);
+    await deleteUsersByName(request, headers, name);
+  }
 });
 
 test("Add User form is displayed with all fields", async ({ page }) => {
@@ -44,6 +54,7 @@ test("User is created with valid data", async () => {
     userName: `User${Date.now().toString().slice(-6)}`,
     yearOfBirth: "1990",
   };
+  createdUserNames.push(user.userName);
 
   await addUserSteps.createUser(user);
 
@@ -66,6 +77,7 @@ test("User under 18 is not created", async ({ page }) => {
     userName: `User${Date.now().toString().slice(-6)}`,
     yearOfBirth: "2009",
   };
+  createdUserNames.push(user.userName);
 
   await addUserSteps.createUser(user);
 
