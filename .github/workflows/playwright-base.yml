@@ -3,9 +3,10 @@ on:
   workflow_call:
     inputs:
       grep:
-        description: "Tag to run, e.g. @smoke or @regression"
+        description: "Tag to run, e.g. @smoke. Empty = all tests"
         type: string
-        required: true
+        required: false
+        default: ""
 jobs:
   test:
     timeout-minutes: 60
@@ -22,7 +23,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test --grep "${{ inputs.grep }}"
+        run: npx playwright test ${{ inputs.grep && format('--grep "{0}"', inputs.grep) || '' }}
       - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:

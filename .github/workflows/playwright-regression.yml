@@ -7,5 +7,3 @@ on:
 jobs:
   regression:
     uses: ./.github/workflows/playwright-base.yml
-    with:
-      grep: "@regression"
