@@ -10,7 +10,7 @@ async function login(page: Page) {
   await page.getByRole("button", { name: "Sign in" }).click();
 }
 
-test.describe("User table — XPath axes", () => {
+test.describe("User table — XPath axes", { tag: "@regression" }, () => {
   let headers: AuthHeaders;
   let userName: string;
   let userId: string;
@@ -56,7 +56,7 @@ test.describe("User table — XPath axes", () => {
   });
 });
 
-test.describe("Add Address form — XPath functions", () => {
+test.describe("Add Address form — XPath functions", { tag: "@regression" }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ADD_ADDRESS_URL);
     await login(page);

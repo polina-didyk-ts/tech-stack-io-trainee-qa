@@ -1,0 +1,11 @@
+name: Regression Tests
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  regression:
+    uses: ./.github/workflows/playwright-base.yml
+    with:
+      grep: "@regression"
