@@ -24,27 +24,37 @@ test.afterEach(async ({ request }) => {
   }
 });
 
-test("GET/api/User returns a list of users", async ({ request }) => {
-  const userId = await createUser(request, headers, newUser);
-  createdUserIds.push(userId);
+test(
+  "GET/api/User returns a list of users",
+  { tag: ["@smoke", "@regression"] },
+  async ({ request }) => {
+    const userId = await createUser(request, headers, newUser);
+    createdUserIds.push(userId);
 
-  const response = await request.get("/api/User", { headers });
+    const response = await request.get("/api/User", { headers });
 
-  expect(response.status()).toBe(200);
-  expect(await response.json()).toContainEqual(expect.objectContaining({ id: userId, ...newUser }));
-});
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toContainEqual(
+      expect.objectContaining({ id: userId, ...newUser }),
+    );
+  },
+);
 
-test("POST/api/User creates a new user", async ({ request }) => {
-  const response = await request.post("/api/User", { headers, data: newUser });
+test(
+  "POST/api/User creates a new user",
+  { tag: ["@smoke", "@regression"] },
+  async ({ request }) => {
+    const response = await request.post("/api/User", { headers, data: newUser });
 
-  expect(response.status()).toBe(200);
-  const createdUser = await response.json();
-  createdUserIds.push(createdUser.id);
-  expect(createdUser).toMatchObject(newUser);
-  expect(createdUser.id).toEqual(expect.any(String));
-});
+    expect(response.status()).toBe(200);
+    const createdUser = await response.json();
+    createdUserIds.push(createdUser.id);
+    expect(createdUser).toMatchObject(newUser);
+    expect(createdUser.id).toEqual(expect.any(String));
+  },
+);
 
-test("PUT/api/User/{id} updates an existing user", async ({ request }) => {
+test("PUT/api/User/{id} updates an existing user", { tag: "@regression" }, async ({ request }) => {
   const userId = await createUser(request, headers, newUser);
   createdUserIds.push(userId);
 
@@ -58,7 +68,7 @@ test("PUT/api/User/{id} updates an existing user", async ({ request }) => {
   expect(await getResponse.json()).toMatchObject({ id: userId, ...updatedUser });
 });
 
-test("DELETE/api/User/{id} removes the user", async ({ request }) => {
+test("DELETE/api/User/{id} removes the user", { tag: "@regression" }, async ({ request }) => {
   const userId = await createUser(request, headers, newUser);
   createdUserIds.push(userId);
 

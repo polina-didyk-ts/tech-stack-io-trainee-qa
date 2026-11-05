@@ -1,9 +1,12 @@
-name: Playwright Tests
+name: Playwright Base
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  workflow_call:
+    inputs:
+      grep:
+        description: "Tag to run, e.g. @smoke. Empty = all tests"
+        type: string
+        required: false
+        default: ""
 jobs:
   test:
     timeout-minutes: 60
@@ -20,7 +23,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npx playwright test ${{ inputs.grep && format('--grep "{0}"', inputs.grep) || '' }}
       - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:

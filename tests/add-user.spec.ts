@@ -29,16 +29,20 @@ test.afterEach(async ({ request }) => {
   }
 });
 
-test("Add User form is displayed with all fields", async ({ page }) => {
-  await expect(page).toHaveURL(AddUserPage.url);
-  await expect(addUserPage.genderSelect).toBeVisible();
-  await expect(addUserPage.userNameInput).toBeVisible();
-  await expect(addUserPage.yearOfBirthInput).toBeVisible();
-  await expect(addUserPage.createButton).toBeVisible();
-  await expect(addUserPage.cancelButton).toBeVisible();
-});
+test(
+  "Add User form is displayed with all fields",
+  { tag: ["@smoke", "@regression"] },
+  async ({ page }) => {
+    await expect(page).toHaveURL(AddUserPage.url);
+    await expect(addUserPage.genderSelect).toBeVisible();
+    await expect(addUserPage.userNameInput).toBeVisible();
+    await expect(addUserPage.yearOfBirthInput).toBeVisible();
+    await expect(addUserPage.createButton).toBeVisible();
+    await expect(addUserPage.cancelButton).toBeVisible();
+  },
+);
 
-test("Input fields accept entered values", async () => {
+test("Input fields accept entered values", { tag: "@regression" }, async () => {
   const user: UserDTO = { gender: "2", userName: "Test User", yearOfBirth: "1990" };
 
   await addUserSteps.fillUserForm(user);
@@ -48,7 +52,7 @@ test("Input fields accept entered values", async () => {
   await expect(addUserPage.yearOfBirthInput).toHaveValue(user.yearOfBirth);
 });
 
-test("User is created with valid data", async () => {
+test("User is created with valid data", { tag: ["@smoke", "@regression"] }, async () => {
   const user: UserDTO = {
     gender: "2",
     userName: `User${Date.now().toString().slice(-6)}`,
@@ -62,7 +66,7 @@ test("User is created with valid data", async () => {
   await expect(homePage.userNameCell(user.userName)).toBeVisible();
 });
 
-test("User is not created without a name", async ({ page }) => {
+test("User is not created without a name", { tag: "@regression" }, async ({ page }) => {
   const user: UserDTO = { gender: "2", userName: "", yearOfBirth: "1990" };
 
   await addUserSteps.createUser(user);
@@ -71,7 +75,7 @@ test("User is not created without a name", async ({ page }) => {
   await expect(page).toHaveURL(AddUserPage.url);
 });
 
-test("User under 18 is not created", async ({ page }) => {
+test("User under 18 is not created", { tag: "@regression" }, async ({ page }) => {
   const user: UserDTO = {
     gender: "2",
     userName: `User${Date.now().toString().slice(-6)}`,
