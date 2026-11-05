@@ -7,3 +7,4 @@ on:
 jobs:
   regression:
     uses: ./.github/workflows/playwright-base.yml
+    secrets: inherit
